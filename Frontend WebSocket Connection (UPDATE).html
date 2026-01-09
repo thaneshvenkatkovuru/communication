@@ -1,0 +1,34 @@
+<script>
+const socket = new WebSocket("ws://localhost:8080/chat");
+const messages = document.getElementById("messages");
+
+socket.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    addMessage(data.text, data.type);
+};
+
+function send() {
+    const input = document.getElementById("input");
+    if (!input.value.trim()) return;
+
+    const msg = {
+        text: input.value,
+        type: "sent"
+    };
+
+    socket.send(JSON.stringify(msg));
+    input.value = "";
+}
+
+function addMessage(text, type) {
+    const msg = document.createElement("div");
+    msg.className = "message " + type;
+    msg.textContent = text;
+    messages.appendChild(msg);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+input.addEventListener("keypress", e => {
+    if (e.key === "Enter") send();
+});
+</script>

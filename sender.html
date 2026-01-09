@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sender Chat</title>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #ece5dd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.chat-container {
+    width: 320px;
+    height: 550px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.chat-header {
+    background: #075e54;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+.chat-messages {
+    flex: 1;
+    padding: 10px;
+    background: #ece5dd;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+.message {
+    max-width: 75%;
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 8px;
+}
+.sent { background: #dcf8c6; align-self: flex-end; }
+.received { background: #fff; align-self: flex-start; }
+.chat-input {
+    display: flex;
+    padding: 8px;
+    background: #f0f0f0;
+}
+.chat-input input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+}
+.chat-input button {
+    margin-left: 5px;
+    width: 40px;
+    border-radius: 50%;
+    border: none;
+    background: #075e54;
+    color: #fff;
+}
+</style>
+</head>
+
+<body>
+<div class="chat-container">
+    <div class="chat-header">Sender</div>
+    <div class="chat-messages" id="messages"></div>
+    <div class="chat-input">
+        <input id="input" placeholder="Type message">
+        <button onclick="send()">➤</button>
+    </div>
+</div>
+
+<script>
+const channel = new BroadcastChannel("chat");
+const messages = document.getElementById("messages");
+
+function send() {
+    const input = document.getElementById("input");
+    if (!input.value.trim()) return;
+
+    addMessage(input.value, "sent");
+    channel.postMessage({ text: input.value, from: "sender" });
+    input.value = "";
+}
+
+channel.onmessage = e => {
+    if (e.data.from === "receiver") {
+        addMessage(e.data.text, "received");
+    }
+};
+
+function addMessage(text, type) {
+    const msg = document.createElement("div");
+    msg.className = `message ${type}`;
+    msg.textContent = text;
+    messages.appendChild(msg);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+input.addEventListener("keypress", e => {
+    if (e.key === "Enter") send();
+});
+</script>
+</body>
+</html>
