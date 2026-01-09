@@ -1,5 +1,5 @@
 <script>
-const socket = new WebSocket("ws://localhost:8080/chat");
+const socket = new WebSocket("ws://localhost:192.168.1.50/chat");
 const messages = document.getElementById("messages");
 
 socket.onmessage = function(event) {
@@ -32,3 +32,4 @@ input.addEventListener("keypress", e => {
     if (e.key === "Enter") send();
 });
 </script>
+
